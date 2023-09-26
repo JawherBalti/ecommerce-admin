@@ -42,7 +42,7 @@ export const StoreModal = () => {
       //to redirect to store page instead of using next redirect() because it can cause bugs
       window.location.assign(`${res.data.id}`)
       
-    } catch (error) {
+    } catch (error) {      
       toast.error("Something went wrong")
      } finally {
       setLoading(false);
