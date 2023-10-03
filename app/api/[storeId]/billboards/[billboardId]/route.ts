@@ -10,10 +10,11 @@ export async function PATCH(
         const { userId } = auth()
 
         const body = await req.json()
-        const { label, imageUrl } = body
+        const { label, labelColor, imageUrl } = body
 
         if (!userId) return new NextResponse("Unauthenticated", { status: 401 })
         if (!label) return new NextResponse("Label is required", { status: 400 })
+        if (!labelColor) return new NextResponse("Label color is required", { status: 400 })
         if (!imageUrl) return new NextResponse("Image is required", { status: 400 })
         if (!params.billboardId) return new NextResponse("Billboard ID is required", { status: 400 })
         
@@ -33,6 +34,7 @@ export async function PATCH(
             },
             data: {
                 label,
+                labelColor,
                 imageUrl
             }
         })

@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,7 +14,6 @@ import { Heading } from "@/components/ui/heading";
 import ImageUpload from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Billboard } from "@prisma/client";
 import axios from "axios";
@@ -25,6 +23,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { HexColorPicker } from "react-colorful";
+import "../../../../../../../node_modules/react-colorful/dist/index";
 
 interface BillboardFormProps {
   initialData: Billboard | null;
@@ -32,6 +32,7 @@ interface BillboardFormProps {
 
 const formSchema = z.object({
   label: z.string().min(1),
+  labelColor: z.string().min(4),
   imageUrl: z.string().min(1)
 });
 type BillboardFormValues = z.infer<typeof formSchema>;
@@ -39,16 +40,20 @@ type BillboardFormValues = z.infer<typeof formSchema>;
 export const BillboardForm: React.FC<BillboardFormProps> = ({
   initialData,
 }) => {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const params = useParams();
-  const router = useRouter();
 
   const title = initialData ? "Edit billboard" : "Create billboard";
   const description = initialData ? "Edit a billboard" : "Add a new billboard";
   const toastMessage = initialData ? "Billboard updated" : "Billboard created";
   const action = initialData ? "Save changes" : "Create";
+
+  const [open, setOpen] = useState(false);
+  const [colorPickerIsOpen, setColorPickerIsOpen] = useState(false);
+  const [color, setColor] = useState(description === "Edit a billboard" ? initialData!.labelColor : "#aabbcc");
+
+  const [loading, setLoading] = useState(false);
+
+  const params = useParams();
+  const router = useRouter();
 
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
@@ -59,6 +64,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   });
 
   const onSubmit = async (data: BillboardFormValues) => {
+    data.labelColor= color
     try {
       setLoading(true);
       if (initialData) {
@@ -150,6 +156,37 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="labelColor"
+              defaultValue={color}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Text Color</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-x-4">
+                      <div className="hidden">
+                        <Input
+                          disabled={loading}
+                          placeholder="Color value"
+                          {...field}
+                          />
+                          {description === "Edit a billboard" ? field.value = initialData!.labelColor : field.value = color}
+                      </div>
+                      <div
+                        onClick={() => setColorPickerIsOpen(!colorPickerIsOpen)}
+                        className="border p-4 rounded-full hover:cursor-pointer"
+                        style={{ backgroundColor: color}}
+                      />
+                    </div>
+                  </FormControl>
+                  {colorPickerIsOpen ? (
+                    <HexColorPicker color={color} onChange={setColor} />
+                  ) : null}
                   <FormMessage />
                 </FormItem>
               )}

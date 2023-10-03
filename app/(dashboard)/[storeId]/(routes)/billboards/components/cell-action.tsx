@@ -31,7 +31,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     navigator.clipboard.writeText(id);
     toast.success("Billboard ID copied to clipboard.");
   };
-  console.log(data);
 
   const onConfirm = async () => {
     try {

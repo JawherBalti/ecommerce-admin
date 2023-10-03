@@ -9,10 +9,11 @@ export async function POST(
     try {
         const { userId } = auth()
         const body = await req.json()
-        const { label, imageUrl } = body
+        const { label, labelColor, imageUrl } = body
 
         if (!userId) return new NextResponse("Unauthenticated", { status: 401 })
         if (!label) return new NextResponse("Label is required", { status: 400 })
+        if (!labelColor) return new NextResponse("Label color is required", { status: 400 })
         if (!imageUrl) return new NextResponse("Image is required", { status: 400 })
         if (!params.storeId) return new NextResponse("Store ID is required", { status: 400 })
         
@@ -28,6 +29,7 @@ export async function POST(
         const billboard = await prismadb.billboard.create({
             data: {
                 label,
+                labelColor,
                 imageUrl,
                 storeId: params.storeId
             }
