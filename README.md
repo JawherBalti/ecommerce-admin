@@ -1,5 +1,5 @@
 ## Live application
-[e-commerce.com](https://ecommerce-admin-one-xi.vercel.app)
+[e-commerce.com](https://storeeadmin.vercel.app)
 
 ## Getting Started
 
